@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Level 13 Unlocked 🎮 — Uğur-un Ad Günü</title>
+  <meta name="description" content="Uğur-un 13-cü ad günü üçün xüsusi sürpriz səhifə! Level 13 Unlocked!" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0010;
+      --bg2: #0d0020;
+      --neon-purple: #bf00ff;
+      --neon-cyan: #00f5ff;
+      --neon-magenta: #ff00aa;
+      --neon-yellow: #ffe600;
+      --neon-green: #39ff14;
+      --card-bg: rgba(20, 0, 40, 0.85);
+      --border-glow: rgba(191, 0, 255, 0.5);
+      --text-main: #e8d5ff;
+      --text-dim: #9980b3;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text-main);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 18px;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* ─── CANVAS STARS ─── */
+    #starfield {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ─── LOADING SCREEN ─── */
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      gap: 32px;
+    }
+
+    .loader-title {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(14px, 3vw, 24px);
+      color: var(--neon-cyan);
+      text-shadow: 0 0 20px var(--neon-cyan), 0 0 40px var(--neon-cyan);
+      animation: blink 1s infinite;
+      text-align: center;
+      padding: 0 16px;
+    }
+
+    .loader-bar-wrap {
+      width: min(80vw, 500px);
+      height: 28px;
+      border: 3px solid var(--neon-purple);
+      border-radius: 4px;
+      box-shadow: 0 0 16px var(--neon-purple), inset 0 0 8px rgba(191,0,255,0.2);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .loader-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan), var(--neon-magenta));
+      transition: width 0.1s linear;
+      position: relative;
+    }
+
+    .loader-bar::after {
+      content: '';
+      position: absolute;
+      top: 0; right: 0;
+      width: 40px; height: 100%;
+      background: rgba(255,255,255,0.4);
+      filter: blur(8px);
+    }
+
+    .loader-pct {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 13px;
+      color: var(--neon-yellow);
+      text-shadow: 0 0 10px var(--neon-yellow);
+    }
+
+    .loader-status {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 11px;
+      color: var(--neon-green);
+      min-height: 20px;
+    }
+
+    /* ─── MAIN CONTENT ─── */
+    #main-content {
+      position: relative;
+      z-index: 1;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    #main-content.visible {
+      display: block;
+      opacity: 1;
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 40% at 50% 60%, rgba(191,0,255,0.15) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 30% at 20% 20%, rgba(0,245,255,0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 11px;
+      color: var(--neon-magenta);
+      border: 2px solid var(--neon-magenta);
+      padding: 8px 20px;
+      border-radius: 4px;
+      box-shadow: 0 0 14px var(--neon-magenta), inset 0 0 8px rgba(255,0,170,0.1);
+      margin-bottom: 32px;
+      letter-spacing: 2px;
+      animation: pulseGlow 2s ease-in-out infinite;
+    }
+
+    .hero-title {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(20px, 5vw, 52px);
+      line-height: 1.4;
+      background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-purple) 50%, var(--neon-magenta) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 20px rgba(191,0,255,0.7));
+      margin-bottom: 16px;
+      animation: titleFlicker 4s ease-in-out infinite;
+    }
+
+    .hero-sub {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(18px, 3.5vw, 32px);
+      font-weight: 700;
+      color: var(--neon-yellow);
+      text-shadow: 0 0 20px var(--neon-yellow), 0 0 40px rgba(255,230,0,0.4);
+      margin-bottom: 12px;
+    }
+
+    .hero-desc {
+      font-size: 16px;
+      color: var(--text-dim);
+      margin-bottom: 48px;
+      letter-spacing: 1px;
+    }
+
+    .scanlines {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 3px,
+        rgba(0,0,0,0.15) 3px,
+        rgba(0,0,0,0.15) 4px
+      );
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* ─── CONFETTI BUTTON ─── */
+    #confetti-btn {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(10px, 2vw, 14px);
+      color: #000;
+      background: linear-gradient(135deg, var(--neon-yellow), var(--neon-magenta));
+      border: none;
+      padding: 18px 36px;
+      border-radius: 6px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 30px rgba(255,230,0,0.5), 0 0 60px rgba(255,0,170,0.3);
+      transition: transform 0.15s, box-shadow 0.15s;
+      letter-spacing: 1px;
+    }
+
+    #confetti-btn:hover {
+      transform: scale(1.06) translateY(-2px);
+      box-shadow: 0 0 50px rgba(255,230,0,0.8), 0 0 80px rgba(255,0,170,0.5);
+    }
+
+    #confetti-btn:active { transform: scale(0.97); }
+
+    #confetti-btn::before {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 60%);
+      transform: scale(0);
+      transition: transform 0.4s ease;
+    }
+
+    #confetti-btn:hover::before { transform: scale(1); }
+
+    /* ─── CANVAS CONFETTI ─── */
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 8000;
+    }
+
+    /* ─── SECTION TITLE ─── */
+    .section {
+      padding: 80px 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-title {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(12px, 2.5vw, 18px);
+      color: var(--neon-cyan);
+      text-align: center;
+      margin-bottom: 56px;
+      text-shadow: 0 0 20px var(--neon-cyan);
+      letter-spacing: 3px;
+    }
+
+    .section-title span {
+      color: var(--neon-magenta);
+      text-shadow: 0 0 20px var(--neon-magenta);
+    }
+
+    /* ─── ACHIEVEMENTS ─── */
+    .achievements-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 28px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .achievement-card {
+      background: var(--card-bg);
+      border: 2px solid var(--border-glow);
+      border-radius: 12px;
+      padding: 32px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+      transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+      cursor: default;
+    }
+
+    .achievement-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(191,0,255,0.05), rgba(0,245,255,0.05));
+      pointer-events: none;
+    }
+
+    .achievement-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 30px rgba(0,245,255,0.3), 0 20px 40px rgba(0,0,0,0.5);
+    }
+
+    .achievement-icon {
+      font-size: 52px;
+      display: block;
+      margin-bottom: 16px;
+      filter: drop-shadow(0 0 10px rgba(255,255,255,0.5));
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .achievement-card:nth-child(2) .achievement-icon { animation-delay: 0.5s; }
+    .achievement-card:nth-child(3) .achievement-icon { animation-delay: 1s; }
+    .achievement-card:nth-child(4) .achievement-icon { animation-delay: 1.5s; }
+
+    .achievement-badge-label {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 8px;
+      color: var(--neon-yellow);
+      background: rgba(255,230,0,0.1);
+      border: 1px solid var(--neon-yellow);
+      padding: 4px 10px;
+      border-radius: 3px;
+      display: inline-block;
+      margin-bottom: 14px;
+      letter-spacing: 1px;
+      text-shadow: 0 0 8px var(--neon-yellow);
+    }
+
+    .achievement-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--neon-cyan);
+      text-shadow: 0 0 10px var(--neon-cyan);
+      margin-bottom: 10px;
+    }
+
+    .achievement-desc {
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    .achievement-xp {
+      margin-top: 18px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 9px;
+      color: var(--neon-green);
+      text-shadow: 0 0 10px var(--neon-green);
+    }
+
+    /* ─── GALLERY ─── */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .gallery-item {
+      aspect-ratio: 1/1;
+      background: var(--card-bg);
+      border: 2px solid var(--border-glow);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 9px;
+      color: var(--text-dim);
+      text-align: center;
+      padding: 20px;
+      transition: border-color 0.3s, transform 0.3s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .gallery-item:hover {
+      border-color: var(--neon-magenta);
+      transform: scale(1.04);
+      box-shadow: 0 0 24px rgba(255,0,170,0.3);
+    }
+
+    .gallery-pixel {
+      font-size: 42px;
+      opacity: 0.6;
+    }
+
+    /* ─── MESSAGES ─── */
+    .messages-section {
+      background: linear-gradient(180deg, transparent, rgba(191,0,255,0.04), transparent);
+    }
+
+    .msg-form {
+      max-width: 640px;
+      margin: 0 auto 56px;
+      background: var(--card-bg);
+      border: 2px solid var(--border-glow);
+      border-radius: 14px;
+      padding: 36px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 0 40px rgba(191,0,255,0.1);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 9px;
+      color: var(--neon-cyan);
+      text-shadow: 0 0 8px var(--neon-cyan);
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      border: 2px solid rgba(191, 0, 255, 0.4);
+      border-radius: 8px;
+      padding: 14px 16px;
+      color: var(--text-main);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      resize: vertical;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 14px rgba(0,245,255,0.3);
+    }
+
+    .form-group textarea { min-height: 110px; }
+
+    .send-btn {
+      width: 100%;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 11px;
+      color: #000;
+      background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+      border: none;
+      padding: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: transform 0.15s, box-shadow 0.15s, opacity 0.2s;
+      box-shadow: 0 0 24px rgba(0,245,255,0.4);
+    }
+
+    .send-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 0 40px rgba(0,245,255,0.7);
+    }
+
+    .send-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .form-msg {
+      margin-top: 14px;
+      font-size: 14px;
+      text-align: center;
+      min-height: 20px;
+      font-weight: 600;
+    }
+
+    .form-msg.success { color: var(--neon-green); text-shadow: 0 0 10px var(--neon-green); }
+    .form-msg.error   { color: var(--neon-magenta); text-shadow: 0 0 10px var(--neon-magenta); }
+
+    /* ─── MESSAGE CARDS ─── */
+    .messages-list {
+      max-width: 760px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .msg-card {
+      background: var(--card-bg);
+      border: 2px solid rgba(0,245,255,0.2);
+      border-radius: 12px;
+      padding: 24px 28px;
+      backdrop-filter: blur(8px);
+      animation: slideInUp 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .msg-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0;
+      width: 4px; height: 100%;
+      background: linear-gradient(to bottom, var(--neon-cyan), var(--neon-purple));
+    }
+
+    .msg-author {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--neon-cyan);
+      text-shadow: 0 0 8px var(--neon-cyan);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .msg-author::before { content: '▶'; font-size: 10px; color: var(--neon-magenta); }
+
+    .msg-text {
+      font-size: 16px;
+      color: var(--text-main);
+      line-height: 1.6;
+    }
+
+    .msg-time {
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    .no-messages {
+      text-align: center;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+      padding: 48px;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      text-align: center;
+      padding: 40px 24px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 9px;
+      color: var(--text-dim);
+      border-top: 1px solid rgba(191,0,255,0.2);
+      position: relative;
+      z-index: 1;
+    }
+
+    footer span {
+      color: var(--neon-magenta);
+      text-shadow: 0 0 8px var(--neon-magenta);
+    }
+
+    /* ─── SEPARATOR ─── */
+    .pixel-separator {
+      text-align: center;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      color: rgba(191,0,255,0.4);
+      letter-spacing: 4px;
+      margin: 0 auto;
+      max-width: 600px;
+      overflow: hidden;
+    }
+
+    /* ─── KEYFRAMES ─── */
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 14px var(--neon-magenta), inset 0 0 8px rgba(255,0,170,0.1); }
+      50% { box-shadow: 0 0 30px var(--neon-magenta), inset 0 0 16px rgba(255,0,170,0.2); }
+    }
+
+    @keyframes titleFlicker {
+      0%, 95%, 100% { filter: drop-shadow(0 0 20px rgba(191,0,255,0.7)); }
+      96% { filter: drop-shadow(0 0 2px rgba(191,0,255,0.3)); }
+      97% { filter: drop-shadow(0 0 20px rgba(191,0,255,0.7)); }
+      98% { filter: drop-shadow(0 0 4px rgba(191,0,255,0.4)); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes slideInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 600px) {
+      .section { padding: 56px 16px; }
+      .msg-form { padding: 24px 18px; }
+      .achievement-card { padding: 24px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Starfield -->
+<canvas id="starfield"></canvas>
+
+<!-- Confetti -->
+<canvas id="confetti-canvas"></canvas>
+
+<!-- ══════════════ LOADER ══════════════ -->
+<div id="loader" aria-label="Yüklənir">
+  <div class="loader-title">🎮 BIRTHDAY.EXE<br/><br/>LOADING...</div>
+  <div class="loader-bar-wrap">
+    <div class="loader-bar" id="loader-bar"></div>
+  </div>
+  <div class="loader-pct" id="loader-pct">0%</div>
+  <div class="loader-status" id="loader-status">Oyun başlayır...</div>
+</div>
+
+<!-- ══════════════ MAIN ══════════════ -->
+<div id="main-content">
+
+  <!-- ── HERO ── -->
+  <section class="hero" id="hero">
+    <div class="scanlines"></div>
+    <div class="hero-badge">⭐ YENİ SƏVIYYƏ AÇILDI ⭐</div>
+    <h1 class="hero-title">LEVEL 13<br/>UNLOCKED 🎮</h1>
+    <h2 class="hero-sub">Ad günün mübarək, Uğur!</h2>
+    <p class="hero-desc">// 13 il əvvəl ən əzəmətli oyunçu dünyaya gəldi //</p>
+    <button id="confetti-btn" onclick="launchConfetti()">🎉 PARTLATMAQ İSTƏYİRƏM!</button>
+  </section>
+
+  <!-- ── ACHIEVEMENTS ── -->
+  <section class="section" id="achievements">
+    <h2 class="section-title">🏆 <span>ACHIEVEMENT</span> KİTABÇASI 🏆</h2>
+    <div class="achievements-grid">
+
+      <div class="achievement-card">
+        <span class="achievement-icon">🎮</span>
+        <div class="achievement-badge-label">UNLOCKED</div>
+        <div class="achievement-name">13 İL OYUNÇU TƏCRÜBƏSİ</div>
+        <div class="achievement-desc">13 ildir bu dünyada uğurla oynayır. Heç bir boss onu dayandıra bilmədi!</div>
+        <div class="achievement-xp">+9999 XP</div>
+      </div>
+
+      <div class="achievement-card">
+        <span class="achievement-icon">👑</span>
+        <div class="achievement-badge-label">MAX LEVEL</div>
+        <div class="achievement-name">ƏN YAXŞI DOST SƏVİYYƏSİ: MAX</div>
+        <div class="achievement-desc">Dostluq statsı tam dolduruldu. Loyalty: 💯/💯. Unlock edilməsi çox nadir!</div>
+        <div class="achievement-xp">+∞ XP</div>
+      </div>
+
+      <div class="achievement-card">
+        <span class="achievement-icon">💀</span>
+        <div class="achievement-badge-label">BOSS FIGHT</div>
+        <div class="achievement-name">DOĞUM GÜNÜ BOSS-U MƏĞLUB EDİLDİ</div>
+        <div class="achievement-desc">Bu ilin ən güclü boss-u — Yaş 13 — bir zərbəylə məğlub edildi!</div>
+        <div class="achievement-xp">+5000 XP</div>
+      </div>
+
+      <div class="achievement-card">
+        <span class="achievement-icon">🚀</span>
+        <div class="achievement-badge-label">SECRET</div>
+        <div class="achievement-name">UĞUR MOD: AKTİVLƏŞDİRİLDİ</div>
+        <div class="achievement-desc">Bütün həyat yollarında auto-win rejimi aktiv! Uğur hər zaman qalib gəlir.</div>
+        <div class="achievement-xp">+UĞUR XP</div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="pixel-separator">░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░</div>
+
+  <!-- ── GALLERY ── -->
+  <section class="section" id="gallery">
+    <h2 class="section-title">📸 <span>QALEREYA</span> 📸</h2>
+    <div class="gallery-grid">
+      <div class="gallery-item">
+        <div class="gallery-pixel">🖼️</div>
+        <span>[ ŞƏKİL 1 ]<br/>Buraya şəkil<br/>əlavə ediləcək</span>
+      </div>
+      <div class="gallery-item">
+        <div class="gallery-pixel">🖼️</div>
+        <span>[ ŞƏKİL 2 ]<br/>Buraya şəkil<br/>əlavə ediləcək</span>
+      </div>
+      <div class="gallery-item">
+        <div class="gallery-pixel">🖼️</div>
+        <span>[ ŞƏKİL 3 ]<br/>Buraya şəkil<br/>əlavə ediləcək</span>
+      </div>
+      <div class="gallery-item">
+        <div class="gallery-pixel">🖼️</div>
+        <span>[ ŞƏKİL 4 ]<br/>Buraya şəkil<br/>əlavə ediləcək</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="pixel-separator">░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░</div>
+
+  <!-- ── MESSAGES ── -->
+  <section class="section messages-section" id="messages">
+    <h2 class="section-title">💬 <span>AD GÜNÜ</span> MESAJLARı 💬</h2>
+
+    <form class="msg-form" id="msg-form" onsubmit="sendMessage(event)">
+      <div class="form-group">
+        <label for="msg-name">ADINI DAXİL ET</label>
+        <input type="text" id="msg-name" placeholder="Sənin adın..." maxlength="60" required />
+      </div>
+      <div class="form-group">
+        <label for="msg-text">UĞURA MESAJİNİ YAZ</label>
+        <textarea id="msg-text" placeholder="Uğura ad günü mesajını bura yaz... 🎮" maxlength="500" required></textarea>
+      </div>
+      <button type="submit" class="send-btn" id="send-btn">▶ MESAJI GÖNDƏR</button>
+      <div class="form-msg" id="form-msg"></div>
+    </form>
+
+    <div class="messages-list" id="messages-list">
+      <div class="no-messages">⏳ Mesajlar yüklənir...</div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <p>Made with <span>♥</span> for Uğur &nbsp;|&nbsp; Level 13 Unlocked &nbsp;|&nbsp; 🎮 GAME ON</p>
+  </footer>
+
+</div><!-- /main-content -->
+
+<script>
+// ══════════════════════════════════════════════
+//  STARFIELD
+// ══════════════════════════════════════════════
+(function() {
+  const canvas = document.getElementById('starfield');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  function initStars() {
+    stars = [];
+    for (let i = 0; i < 160; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 1.5 + 0.2,
+        alpha: Math.random(),
+        da: (Math.random() * 0.008 + 0.002) * (Math.random() < 0.5 ? 1 : -1),
+        speed: Math.random() * 0.15 + 0.02,
+      });
+    }
+  }
+
+  function drawStars() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    stars.forEach(s => {
+      s.alpha += s.da;
+      if (s.alpha <= 0 || s.alpha >= 1) s.da *= -1;
+      s.y += s.speed;
+      if (s.y > canvas.height) { s.y = 0; s.x = Math.random() * canvas.width; }
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(200,180,255,${s.alpha})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(drawStars);
+  }
+
+  window.addEventListener('resize', () => { resize(); initStars(); });
+  resize(); initStars(); drawStars();
+})();
+
+// ══════════════════════════════════════════════
+//  LOADING SCREEN
+// ══════════════════════════════════════════════
+const loadingSteps = [
+  'Oyun mühiti qurulur...',
+  'Uğur faylları yüklənir...',
+  'Ad günü tortuna şam qoyulur...',
+  '13. səviyyə kilidi açılır...',
+  'Konfeti hazırlanır...',
+  'Sürpriz aktiv edilir...',
+  'HAZIRDIR! 🎮',
+];
+
+let pct = 0;
+let stepIdx = 0;
+const bar = document.getElementById('loader-bar');
+const pctEl = document.getElementById('loader-pct');
+const statusEl = document.getElementById('loader-status');
+
+function tick() {
+  if (pct >= 100) {
+    statusEl.textContent = '✅ TAMAMLANDI!';
+    setTimeout(showMain, 700);
+    return;
+  }
+  const increment = Math.random() * 4 + 1;
+  pct = Math.min(100, pct + increment);
+  bar.style.width = pct + '%';
+  pctEl.textContent = Math.floor(pct) + '%';
+  const stepTarget = Math.floor((pct / 100) * loadingSteps.length);
+  if (stepTarget > stepIdx && stepIdx < loadingSteps.length) {
+    statusEl.textContent = loadingSteps[stepIdx++];
+  }
+  setTimeout(tick, Math.random() * 60 + 30);
+}
+
+function showMain() {
+  const loader = document.getElementById('loader');
+  loader.style.transition = 'opacity 0.6s ease';
+  loader.style.opacity = '0';
+  setTimeout(() => {
+    loader.style.display = 'none';
+    const main = document.getElementById('main-content');
+    main.style.display = 'block';
+    requestAnimationFrame(() => { main.style.opacity = '1'; });
+    loadMessages();  // localStorage-dan yüklə
+  }, 600);
+}
+
+tick();
+
+// ══════════════════════════════════════════════
+//  CONFETTI
+// ══════════════════════════════════════════════
+const confCanvas = document.getElementById('confetti-canvas');
+const confCtx = confCanvas.getContext('2d');
+let confetti = [];
+let animId = null;
+
+function launchConfetti() {
+  confCanvas.width = window.innerWidth;
+  confCanvas.height = window.innerHeight;
+  confetti = [];
+  const colors = ['#bf00ff','#00f5ff','#ff00aa','#ffe600','#39ff14','#ff6600','#ffffff'];
+  for (let i = 0; i < 220; i++) {
+    confetti.push({
+      x: Math.random() * confCanvas.width,
+      y: -Math.random() * 300,
+      vx: (Math.random() - 0.5) * 5,
+      vy: Math.random() * 4 + 2,
+      rot: Math.random() * 360,
+      rotV: (Math.random() - 0.5) * 8,
+      w: Math.random() * 12 + 6,
+      h: Math.random() * 8 + 4,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      alpha: 1,
+    });
+  }
+  if (animId) cancelAnimationFrame(animId);
+  animateConfetti();
+}
+
+function animateConfetti() {
+  confCtx.clearRect(0, 0, confCanvas.width, confCanvas.height);
+  let alive = false;
+  confetti.forEach(c => {
+    if (c.y < confCanvas.height + 20 && c.alpha > 0.05) {
+      alive = true;
+      c.x += c.vx;
+      c.y += c.vy;
+      c.vy += 0.08;
+      c.rot += c.rotV;
+      if (c.y > confCanvas.height * 0.7) c.alpha -= 0.015;
+      confCtx.save();
+      confCtx.translate(c.x, c.y);
+      confCtx.rotate(c.rot * Math.PI / 180);
+      confCtx.globalAlpha = Math.max(0, c.alpha);
+      confCtx.fillStyle = c.color;
+      confCtx.fillRect(-c.w/2, -c.h/2, c.w, c.h);
+      confCtx.restore();
+    }
+  });
+  if (alive) animId = requestAnimationFrame(animateConfetti);
+  else confCtx.clearRect(0, 0, confCanvas.width, confCanvas.height);
+}
+
+// ══════════════════════════════════════════════
+//  MESSAGES — localStorage (server lazım deyil)
+// ══════════════════════════════════════════════
+const LS_KEY = 'ugur_birthday_messages';
+
+function loadMessages() {
+  const msgs = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+  renderMessages(msgs);
+}
+
+function renderMessages(msgs) {
+  const list = document.getElementById('messages-list');
+  if (!msgs || msgs.length === 0) {
+    list.innerHTML = '<div class="no-messages">🎮 Hələ heç bir mesaj yoxdur.<br/>İlk mesajı sən yaz!</div>';
+    return;
+  }
+  list.innerHTML = msgs.map(m => `
+    <div class="msg-card">
+      <div class="msg-author">${escapeHtml(m.name)}</div>
+      <div class="msg-text">${escapeHtml(m.message)}</div>
+      <div class="msg-time">${m.created_at}</div>
+    </div>
+  `).join('');
+}
+
+function sendMessage(e) {
+  e.preventDefault();
+  const name = document.getElementById('msg-name').value.trim();
+  const message = document.getElementById('msg-text').value.trim();
+  const btn = document.getElementById('send-btn');
+  const info = document.getElementById('form-msg');
+
+  if (!name || !message) return;
+
+  const msgs = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+  msgs.unshift({
+    name,
+    message,
+    created_at: new Date().toLocaleString('az-AZ'),
+  });
+  localStorage.setItem(LS_KEY, JSON.stringify(msgs));
+
+  document.getElementById('msg-form').reset();
+  info.className = 'form-msg success';
+  info.textContent = '✅ Mesajın əlavə edildi! 🎉';
+  setTimeout(() => { info.textContent = ''; }, 3000);
+  renderMessages(msgs);
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
